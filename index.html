@@ -549,7 +549,7 @@ extractBtn.addEventListener('click', async () => {
 
     try {
         // 使用第三方免费解析接口（绕过B站限制）
-        const parseRes = await fetch(`https://api.injahow.cn/bilibili/?url=${encodeURIComponent(link)}`);
+        const parseRes = await fetch(`http://127.0.0.1:5000/get_subtitle?url=${encodeURIComponent(link)}`);
         if (!parseRes.ok) {
             setTip('出错了', 'error');
             return;
@@ -770,3 +770,4 @@ extractBtn.addEventListener('click', async () => {
 </body>
 
 </html>
+
