@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>B站字幕提取工具</title>
+    <title>B站字幕提取工具（优化版）</title>
     <!-- 引入依赖库 -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
@@ -17,17 +17,14 @@
         }
 
         body {
-            /* 粉黑紫渐变背景 - 科技感华丽风 */
             background: linear-gradient(135deg, #121212 0%, #2a0845 50%, #5c075e 100%);
             min-height: 100vh;
             padding: 40px 20px;
             color: #ffffff;
-            /* 背景光效 */
             background-attachment: fixed;
             position: relative;
         }
 
-        /* 科技感装饰光效 */
         body::before {
             content: "";
             position: fixed;
@@ -44,7 +41,6 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            /* 玻璃质感容器边框 */
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 40px;
@@ -53,7 +49,6 @@
             box-shadow: 0 0 40px rgba(167, 139, 250, 0.2);
         }
 
-        /* 标题样式 - 科技感渐变+发光 */
         h1 {
             text-align: center;
             font-size: 42px;
@@ -67,7 +62,6 @@
             letter-spacing: 1px;
         }
 
-        /* API输入区域 */
         .api-input-area {
             margin-bottom: 25px;
         }
@@ -88,7 +82,6 @@
             transition: all 0.3s ease;
             background: rgba(255, 255, 255, 0.95);
             color: #121212;
-            /* 科技感输入框阴影 */
             box-shadow: inset 0 0 8px rgba(167, 139, 250, 0.1);
         }
 
@@ -97,7 +90,6 @@
             box-shadow: 0 0 15px rgba(167, 139, 250, 0.4);
         }
 
-        /* 链接输入区域 */
         .link-input-area {
             margin-bottom: 35px;
         }
@@ -126,7 +118,6 @@
             box-shadow: 0 0 15px rgba(167, 139, 250, 0.4);
         }
 
-        /* 渐变按钮通用样式 - 科技感华丽版 */
         .gradient-btn {
             padding: 16px 36px;
             background: linear-gradient(135deg, #f687b3 0%, #a78bfa 100%);
@@ -138,7 +129,6 @@
             cursor: pointer;
             transition: all 0.3s ease;
             white-space: nowrap;
-            /* 按钮发光效果 */
             box-shadow: 0 4px 15px rgba(246, 135, 179, 0.3);
             position: relative;
             overflow: hidden;
@@ -172,7 +162,6 @@
             opacity: 0.7;
         }
 
-        /* 白色按钮通用样式 - 科技感 */
         .white-btn {
             padding: 15px 30px;
             background: rgba(255, 255, 255, 0.98);
@@ -184,7 +173,6 @@
             cursor: pointer;
             transition: all 0.3s ease;
             width: 100%;
-            /* 科技感按钮效果 */
             box-shadow: 0 4px 12px rgba(167, 139, 250, 0.2);
             position: relative;
             overflow: hidden;
@@ -222,7 +210,6 @@
             opacity: 0.8;
         }
 
-        /* 提示区域 */
         .tip-area {
             text-align: center;
             margin-bottom: 25px;
@@ -244,7 +231,6 @@
             text-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
         }
 
-        /* 功能卡片容器 */
         .card-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -252,7 +238,6 @@
             margin-bottom: 40px;
         }
 
-        /* 卡片样式 - 白色底色+科技感边框 */
         .function-card {
             background: rgba(255, 255, 255, 0.98);
             border: 2px solid;
@@ -263,7 +248,6 @@
             display: flex;
             flex-direction: column;
             gap: 25px;
-            /* 卡片悬浮效果 */
             transition: all 0.4s ease;
         }
 
@@ -290,7 +274,6 @@
             gap: 20px;
         }
 
-        /* 预览区域 */
         .preview-area {
             margin-bottom: 50px;
         }
@@ -334,7 +317,6 @@
             margin: 10px 0;
         }
 
-        /* 底部免责声明 */
         .footer {
             text-align: center;
             font-size: 13px;
@@ -346,7 +328,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- 标题 -->
         <h1>B站字幕提取工具</h1>
 
         <!-- API密钥输入区域 -->
@@ -369,13 +350,10 @@
 
         <!-- 功能卡片区域 -->
         <div class="card-container">
-            <!-- 左侧字幕下载卡片 -->
             <div class="function-card">
                 <h2 class="card-title">下载字幕报告</h2>
                 <button class="white-btn" id="downloadSubtitleBtn" disabled>下载字幕TXT文件</button>
             </div>
-
-            <!-- 右侧AI生成卡片 -->
             <div class="function-card">
                 <h2 class="card-title">生成思维导图/笔记文档</h2>
                 <div class="btn-group">
@@ -388,7 +366,6 @@
         <!-- 预览区域 -->
         <div class="preview-area" id="previewArea"></div>
 
-        <!-- 底部免责声明 -->
         <div class="footer">
             本工具仅用于个人学习使用，请勿用于商业用途
         </div>
@@ -413,7 +390,10 @@
             title: '',
             upName: '',
             subtitle: '',
-            duration: 0
+            duration: 0,
+            reportContent: '',
+            noteContent: '',
+            mindmapCode: ''
         };
         let isGenerating = false; // 生成锁，防止同时生成多个内容
 
@@ -459,27 +439,23 @@
         async function downloadWord(content, fileName) {
             const { Document, Packer, Paragraph, TextRun, HeadingLevel } = window.docx;
             
-            // 拆分内容
             const lines = content.split('\n').filter(line => line.trim() !== '');
             const doc = new Document({
                 sections: [{
                     properties: {},
                     children: lines.map(line => {
-                        // 标题处理
                         if (line.startsWith('视频标题：') || line.startsWith('UP主：') || line.startsWith('视频整体总结：')) {
                             return new Paragraph({
                                 heading: HeadingLevel.HEADING_2,
                                 children: [new TextRun({ text: line, bold: true, size: 24 })]
                             });
                         }
-                        // 重点项处理
                         if (/^\d+、/.test(line)) {
                             return new Paragraph({
                                 indent: { firstLine: 400 },
                                 children: [new TextRun({ text: line, size: 22 })]
                             });
                         }
-                        // 普通文本
                         return new Paragraph({
                             children: [new TextRun({ text: line, size: 22 })]
                         });
@@ -496,7 +472,7 @@
         async function callDeepSeekAPI(prompt) {
             const key = apiKey.value.trim();
             if (!key) {
-                setTip('出错了', 'error');
+                setTip('请先输入DeepSeek API密钥', 'error');
                 throw new Error('无API密钥');
             }
 
@@ -519,99 +495,117 @@
                 });
 
                 if (!response.ok) {
-                    setTip('出错了', 'error');
-                    throw new Error('API调用失败');
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.error?.message || `API请求失败 (${response.status})`);
                 }
 
                 const data = await response.json();
                 return data.choices[0].message.content.trim();
             } catch (error) {
-                setTip('出错了', 'error');
+                setTip(`AI生成失败: ${error.message}`, 'error');
                 throw error;
             }
         }
 
-        // 1. 提取字幕核心逻辑
-       // 1. 提取字幕核心逻辑（替换版）
-extractBtn.addEventListener('click', async () => {
-    const link = bilibiliLink.value.trim();
-    if (!link) {
-        setTip('出错了', 'error');
-        return;
-    }
+        // 1. 提取字幕核心逻辑（优化版）
+        extractBtn.addEventListener('click', async () => {
+            const link = bilibiliLink.value.trim();
+            if (!link) {
+                setTip('请输入B站视频链接', 'error');
+                return;
+            }
 
-    // 按钮状态控制
-    extractBtn.disabled = true;
-    extractBtn.textContent = '正在提取...';
-    setTip('正在提取字幕，请稍等，预计需要3-10秒');
-    resetAllBtn();
-    previewArea.innerHTML = '';
+            // 按钮状态控制
+            extractBtn.disabled = true;
+            extractBtn.textContent = '正在提取...';
+            setTip('正在提取字幕，请稍等...');
+            resetAllBtn();
+            // 清空预览区域
+            previewArea.innerHTML = '';
 
-    try {
-        // 使用第三方免费解析接口（绕过B站限制）
-        const parseRes = await fetch(`http://127.0.0.1:5000/get_subtitle?url=${encodeURIComponent(link)}`);
-        if (!parseRes.ok) {
-            setTip('出错了', 'error');
-            return;
-        }
-        const parseData = await parseRes.json();
-        
-        if (parseData.code !== 200) {
-            setTip('出错了', 'error');
-            return;
-        }
+            try {
+                // 调用本地代理接口
+                const parseRes = await fetch(`http://127.0.0.1:5000/get_subtitle?url=${encodeURIComponent(link)}`);
+                if (!parseRes.ok) {
+                    throw new Error(`服务器响应错误 (HTTP ${parseRes.status})`);
+                }
+                const parseData = await parseRes.json();
+                
+                // 如果后端返回非200状态码，显示具体错误信息
+                if (parseData.code !== 200) {
+                    setTip(parseData.msg || '未知错误', 'error');
+                    return;
+                }
 
-        // 提取视频信息
-        currentVideoInfo.title = parseData.data.title || '未知标题';
-        currentVideoInfo.upName = parseData.data.author || '未知UP主';
-        currentVideoInfo.duration = parseData.data.duration || 0;
+                // 提取视频信息
+                currentVideoInfo.title = parseData.data.title || '未知标题';
+                currentVideoInfo.upName = parseData.data.author || '未知UP主';
+                currentVideoInfo.duration = parseData.data.duration || 0;
 
-        // 校验视频时长（不超过1小时）
-        if (currentVideoInfo.duration > 3600) {
-            setTip('出错了', 'error');
-            return;
-        }
+                // 校验视频时长（不超过1小时，可根据需要修改或移除）
+                if (currentVideoInfo.duration > 3600) {
+                    setTip('视频时长超过1小时，暂不支持', 'error');
+                    return;
+                }
 
-        // 获取字幕内容（如果解析接口返回了字幕）
-        let subtitleText = '';
-        if (parseData.data.subtitle && parseData.data.subtitle.length > 0) {
-            // 优先找中文字幕
-            const chineseSub = parseData.data.subtitle.find(s => s.lan === 'zh-CN') || parseData.data.subtitle[0];
-            const subRes = await fetch(chineseSub.url);
-            const subData = await subRes.json();
-            subtitleText = subData.body.map(item => item.content).join('\n');
-        } else {
-            // 如果解析接口没返回字幕，提示用户
-            setTip('出错了', 'error');
-            return;
-        }
+                // 检查是否有字幕
+                if (!parseData.data.subtitle || parseData.data.subtitle.length === 0) {
+                    setTip('该视频没有提供字幕，无法提取', 'error');
+                    return;
+                }
 
-        currentVideoInfo.subtitle = subtitleText;
+                // 优先找中文字幕
+                const chineseSub = parseData.data.subtitle.find(s => s.lan === 'zh-CN') || parseData.data.subtitle[0];
+                
+                // 处理字幕URL（可能是相对路径）
+                let subtitleUrl = chineseSub.url;
+                if (!subtitleUrl.startsWith('http')) {
+                    // 根据经验，B站字幕文件通常存放在这个域名下
+                    subtitleUrl = 'https://aisports.bilibili.com' + subtitleUrl;
+                }
 
-        // 生成字幕报告内容
-        const subtitleReport = `视频标题：${currentVideoInfo.title}\nUP主：${currentVideoInfo.upName}\n\n字幕内容：\n${currentVideoInfo.subtitle}`;
-        currentVideoInfo.reportContent = subtitleReport;
+                // 获取字幕文件
+                const subRes = await fetch(subtitleUrl);
+                if (!subRes.ok) {
+                    throw new Error(`字幕文件下载失败 (HTTP ${subRes.status})`);
+                }
+                const subData = await subRes.json();
 
-        // 成功提示与按钮激活
-        setTip('字幕提取成功', 'success');
-        downloadSubtitleBtn.disabled = false;
-        generateMindmapBtn.disabled = false;
-        generateNoteBtn.disabled = false;
+                // 提取字幕文本（假设字幕JSON结构为 { body: [{ content: '...' }] }）
+                let subtitleText = '';
+                if (subData.body && Array.isArray(subData.body)) {
+                    subtitleText = subData.body.map(item => item.content).join('\n');
+                } else {
+                    // 如果结构不符，尝试其他可能的结构
+                    subtitleText = JSON.stringify(subData, null, 2);
+                }
 
-    } catch (error) {
-        setTip('出错了', 'error');
-        console.error(error);
-    } finally {
-        // 恢复按钮状态
-        extractBtn.disabled = false;
-        extractBtn.textContent = '提取字幕';
-    }
-});
+                currentVideoInfo.subtitle = subtitleText;
+
+                // 生成字幕报告内容
+                const subtitleReport = `视频标题：${currentVideoInfo.title}\nUP主：${currentVideoInfo.upName}\n\n字幕内容：\n${currentVideoInfo.subtitle}`;
+                currentVideoInfo.reportContent = subtitleReport;
+
+                // 成功提示与按钮激活
+                setTip('字幕提取成功', 'success');
+                downloadSubtitleBtn.disabled = false;
+                generateMindmapBtn.disabled = false;
+                generateNoteBtn.disabled = false;
+
+            } catch (error) {
+                console.error('提取字幕时出错:', error);
+                setTip(`出错了: ${error.message}`, 'error');
+            } finally {
+                // 恢复按钮状态
+                extractBtn.disabled = false;
+                extractBtn.textContent = '提取字幕';
+            }
+        });
 
         // 2. 下载字幕报告
         downloadSubtitleBtn.addEventListener('click', () => {
             if (!currentVideoInfo.reportContent) {
-                setTip('出错了', 'error');
+                setTip('没有可下载的字幕内容', 'error');
                 return;
             }
             downloadTxt(currentVideoInfo.reportContent, 'B站字幕.txt');
@@ -620,8 +614,12 @@ extractBtn.addEventListener('click', async () => {
 
         // 3. 生成重点笔记
         generateNoteBtn.addEventListener('click', async () => {
-            if (isGenerating || !currentVideoInfo.subtitle) {
-                setTip('出错了', 'error');
+            if (isGenerating) {
+                setTip('正在生成中，请勿重复点击', 'error');
+                return;
+            }
+            if (!currentVideoInfo.subtitle) {
+                setTip('请先提取字幕', 'error');
                 return;
             }
 
@@ -630,10 +628,10 @@ extractBtn.addEventListener('click', async () => {
             generateNoteBtn.disabled = true;
             generateNoteBtn.textContent = '正在生成...';
             generateMindmapBtn.disabled = true;
-            setTip('正在生成中，请耐心等待，预计需要10-30秒');
+            setTip('正在生成重点笔记，预计需要10-30秒...');
 
             try {
-                // 构建prompt，严格按照用户要求
+                // 构建prompt
                 const prompt = `
                 以下是B站视频的字幕内容，视频标题是《${currentVideoInfo.title}》，UP主是${currentVideoInfo.upName}。
                 请你按照以下要求生成重点笔记：
@@ -650,15 +648,16 @@ extractBtn.addEventListener('click', async () => {
                 const noteContent = await callDeepSeekAPI(prompt);
                 currentVideoInfo.noteContent = noteContent;
 
-                // 渲染预览
+                // 清空预览区域并插入笔记预览
+                previewArea.innerHTML = ''; // 清空旧的预览
                 const notePreview = `
                 <div class="preview-card" id="notePreview">
                     <h3 class="preview-title">重点笔记预览</h3>
-                    <div class="note-content">${noteContent}</div>
+                    <div class="note-content">${noteContent.replace(/\n/g, '<br>')}</div>
                     <button class="white-btn" id="downloadNoteBtn" style="width: auto; margin-top: 20px;">下载Word笔记文档</button>
                 </div>
                 `;
-                previewArea.insertAdjacentHTML('afterbegin', notePreview);
+                previewArea.insertAdjacentHTML('beforeend', notePreview);
 
                 // 绑定下载事件
                 document.getElementById('downloadNoteBtn').addEventListener('click', () => {
@@ -669,7 +668,7 @@ extractBtn.addEventListener('click', async () => {
                 setTip('重点笔记生成成功', 'success');
 
             } catch (error) {
-                setTip('出错了', 'error');
+                // 错误已在callDeepSeekAPI中提示，这里不再重复
                 console.error(error);
             } finally {
                 // 恢复状态
@@ -682,8 +681,12 @@ extractBtn.addEventListener('click', async () => {
 
         // 4. 生成思维导图
         generateMindmapBtn.addEventListener('click', async () => {
-            if (isGenerating || !currentVideoInfo.subtitle) {
-                setTip('出错了', 'error');
+            if (isGenerating) {
+                setTip('正在生成中，请勿重复点击', 'error');
+                return;
+            }
+            if (!currentVideoInfo.subtitle) {
+                setTip('请先提取字幕', 'error');
                 return;
             }
 
@@ -692,10 +695,10 @@ extractBtn.addEventListener('click', async () => {
             generateMindmapBtn.disabled = true;
             generateMindmapBtn.textContent = '正在生成...';
             generateNoteBtn.disabled = true;
-            setTip('正在生成中，请耐心等待，预计需要10-30秒');
+            setTip('正在生成思维导图，预计需要10-30秒...');
 
             try {
-                // 构建prompt，严格按照用户要求
+                // 构建prompt
                 const prompt = `
                 以下是B站视频的字幕内容，视频标题是《${currentVideoInfo.title}》。
                 请你严格按照视频里说话的先后顺序，生成思维导图的markdown代码，使用mermaid的mindmap语法，要求如下：
@@ -712,7 +715,8 @@ extractBtn.addEventListener('click', async () => {
                 const mermaidCode = await callDeepSeekAPI(prompt);
                 currentVideoInfo.mindmapCode = mermaidCode;
 
-                // 渲染预览
+                // 清空预览区域并插入思维导图预览
+                previewArea.innerHTML = ''; // 清空旧的预览
                 const mindmapPreview = `
                 <div class="preview-card" id="mindmapPreview">
                     <h3 class="preview-title">思维导图预览</h3>
@@ -720,16 +724,22 @@ extractBtn.addEventListener('click', async () => {
                     <button class="white-btn" id="downloadMindmapBtn" style="width: auto; margin-top: 20px;">下载思维导图PNG图片</button>
                 </div>
                 `;
-                previewArea.insertAdjacentHTML('afterbegin', mindmapPreview);
+                previewArea.insertAdjacentHTML('beforeend', mindmapPreview);
 
                 // 渲染mermaid思维导图
                 const mindmapContainer = document.getElementById('mindmapContainer');
-                const { svg } = await mermaid.render('mindmapSvg', mermaidCode);
+                // 使用随机ID避免冲突
+                const svgId = 'mindmapSvg_' + Date.now();
+                const { svg } = await mermaid.render(svgId, mermaidCode);
                 mindmapContainer.innerHTML = svg;
 
                 // 绑定下载事件
                 document.getElementById('downloadMindmapBtn').addEventListener('click', () => {
-                    const svgElement = document.getElementById('mindmapSvg');
+                    const svgElement = document.getElementById(svgId);
+                    if (!svgElement) {
+                        setTip('思维导图尚未渲染完成', 'error');
+                        return;
+                    }
                     const svgData = new XMLSerializer().serializeToString(svgElement);
                     const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
                     const url = URL.createObjectURL(blob);
@@ -756,7 +766,6 @@ extractBtn.addEventListener('click', async () => {
                 setTip('思维导图生成成功', 'success');
 
             } catch (error) {
-                setTip('出错了', 'error');
                 console.error(error);
             } finally {
                 // 恢复状态
@@ -768,6 +777,4 @@ extractBtn.addEventListener('click', async () => {
         });
     </script>
 </body>
-
 </html>
-
