@@ -532,104 +532,81 @@
         }
 
         // 1. 提取字幕核心逻辑
-        extractBtn.addEventListener('click', async () => {
-            const link = bilibiliLink.value.trim();
-            if (!link) {
-                setTip('出错了', 'error');
-                return;
-            }
+       // 1. 提取字幕核心逻辑（替换版）
+extractBtn.addEventListener('click', async () => {
+    const link = bilibiliLink.value.trim();
+    if (!link) {
+        setTip('出错了', 'error');
+        return;
+    }
 
-            // 提取BV号
-            const bvid = getBvidFromLink(link);
-            if (!bvid) {
-                setTip('出错了', 'error');
-                return;
-            }
+    // 按钮状态控制
+    extractBtn.disabled = true;
+    extractBtn.textContent = '正在提取...';
+    setTip('正在提取字幕，请稍等，预计需要3-10秒');
+    resetAllBtn();
+    previewArea.innerHTML = '';
 
-            // 按钮状态控制
-            extractBtn.disabled = true;
-            extractBtn.textContent = '正在提取...';
-            setTip('正在提取字幕，请稍等，预计需要3-10秒');
-            resetAllBtn();
-            previewArea.innerHTML = '';
+    try {
+        // 使用第三方免费解析接口（绕过B站限制）
+        const parseRes = await fetch(`https://api.injahow.cn/bilibili/?url=${encodeURIComponent(link)}`);
+        if (!parseRes.ok) {
+            setTip('出错了', 'error');
+            return;
+        }
+        const parseData = await parseRes.json();
+        
+        if (parseData.code !== 200) {
+            setTip('出错了', 'error');
+            return;
+        }
 
-            try {
-                // 步骤1：获取视频基本信息
-                const videoInfoRes = await fetch(`https://api.bilibili.com/x/web-interface/view?bvid=${bvid}`);
-                if (!videoInfoRes.ok) {
-                    setTip('出错了', 'error');
-                    return;
-                }
-                const videoInfoData = await videoInfoRes.json();
-                if (videoInfoData.code !== 0) {
-                    setTip('出错了', 'error');
-                    return;
-                }
+        // 提取视频信息
+        currentVideoInfo.title = parseData.data.title || '未知标题';
+        currentVideoInfo.upName = parseData.data.author || '未知UP主';
+        currentVideoInfo.duration = parseData.data.duration || 0;
 
-                // 提取视频信息
-                const videoData = videoInfoData.data;
-                currentVideoInfo.title = videoData.title;
-                currentVideoInfo.upName = videoData.owner.name;
-                currentVideoInfo.duration = videoData.duration;
+        // 校验视频时长（不超过1小时）
+        if (currentVideoInfo.duration > 3600) {
+            setTip('出错了', 'error');
+            return;
+        }
 
-                // 校验视频时长（不超过1小时）
-                if (currentVideoInfo.duration > 3600) {
-                    setTip('出错了', 'error');
-                    return;
-                }
+        // 获取字幕内容（如果解析接口返回了字幕）
+        let subtitleText = '';
+        if (parseData.data.subtitle && parseData.data.subtitle.length > 0) {
+            // 优先找中文字幕
+            const chineseSub = parseData.data.subtitle.find(s => s.lan === 'zh-CN') || parseData.data.subtitle[0];
+            const subRes = await fetch(chineseSub.url);
+            const subData = await subRes.json();
+            subtitleText = subData.body.map(item => item.content).join('\n');
+        } else {
+            // 如果解析接口没返回字幕，提示用户
+            setTip('出错了', 'error');
+            return;
+        }
 
-                // 步骤2：获取字幕列表
-                const cid = videoData.cid;
-                const subtitleRes = await fetch(`https://api.bilibili.com/x/player/v2?bvid=${bvid}&cid=${cid}`);
-                if (!subtitleRes.ok) {
-                    setTip('出错了', 'error');
-                    return;
-                }
-                const subtitleData = await subtitleRes.json();
-                if (subtitleData.code !== 0) {
-                    setTip('出错了', 'error');
-                    return;
-                }
+        currentVideoInfo.subtitle = subtitleText;
 
-                // 查找中文字幕
-                const subtitleList = subtitleData.data.subtitle?.subtitles || [];
-                const chineseSubtitle = subtitleList.find(item => item.lan === 'zh-CN');
-                if (!chineseSubtitle) {
-                    setTip('出错了', 'error');
-                    return;
-                }
+        // 生成字幕报告内容
+        const subtitleReport = `视频标题：${currentVideoInfo.title}\nUP主：${currentVideoInfo.upName}\n\n字幕内容：\n${currentVideoInfo.subtitle}`;
+        currentVideoInfo.reportContent = subtitleReport;
 
-                // 步骤3：获取字幕内容
-                const subtitleContentRes = await fetch(`https:${chineseSubtitle.subtitle_url}`);
-                if (!subtitleContentRes.ok) {
-                    setTip('出错了', 'error');
-                    return;
-                }
-                const subtitleContentData = await subtitleContentRes.json();
+        // 成功提示与按钮激活
+        setTip('字幕提取成功', 'success');
+        downloadSubtitleBtn.disabled = false;
+        generateMindmapBtn.disabled = false;
+        generateNoteBtn.disabled = false;
 
-                // 拼接字幕内容
-                const subtitleText = subtitleContentData.body.map(item => item.content).join('\n');
-                currentVideoInfo.subtitle = subtitleText;
-
-                // 生成字幕报告内容
-                const subtitleReport = `视频标题：${currentVideoInfo.title}\nUP主：${currentVideoInfo.upName}\n\n字幕内容：\n${currentVideoInfo.subtitle}`;
-                currentVideoInfo.reportContent = subtitleReport;
-
-                // 成功提示与按钮激活
-                setTip('字幕提取成功', 'success');
-                downloadSubtitleBtn.disabled = false;
-                generateMindmapBtn.disabled = false;
-                generateNoteBtn.disabled = false;
-
-            } catch (error) {
-                setTip('出错了', 'error');
-                console.error(error);
-            } finally {
-                // 恢复按钮状态
-                extractBtn.disabled = false;
-                extractBtn.textContent = '提取字幕';
-            }
-        });
+    } catch (error) {
+        setTip('出错了', 'error');
+        console.error(error);
+    } finally {
+        // 恢复按钮状态
+        extractBtn.disabled = false;
+        extractBtn.textContent = '提取字幕';
+    }
+});
 
         // 2. 下载字幕报告
         downloadSubtitleBtn.addEventListener('click', () => {
@@ -791,4 +768,5 @@
         });
     </script>
 </body>
+
 </html>
